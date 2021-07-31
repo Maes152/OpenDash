@@ -8,6 +8,7 @@ import androidx.room.Query
 import info.nightscout.androidaps.plugins.pump.omnipod.dash.history.data.InitialResult
 import info.nightscout.androidaps.plugins.pump.omnipod.dash.history.data.ResolvedResult
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 
 @Dao
@@ -21,6 +22,9 @@ abstract class HistoryRecordDao {
 
     @Query("SELECT * from historyrecords WHERE createdAt <= :since")
     abstract fun allSince(since: Long): Single<List<HistoryRecordEntity>>
+
+    @Query("SELECT * from historyrecords WHERE createdAt <= :since")
+    abstract fun allSinceObservable(since: Long): Observable<List<HistoryRecordEntity>>
 
     @Query("SELECT * FROM historyrecords WHERE id = :id LIMIT 1")
     abstract fun byIdBlocking(id: String): HistoryRecordEntity?

@@ -16,6 +16,7 @@ import info.nightscout.androidaps.plugins.pump.omnipod.dash.history.database.His
 import info.nightscout.androidaps.plugins.pump.omnipod.dash.history.database.HistoryRecordEntity
 import info.nightscout.androidaps.plugins.pump.omnipod.dash.history.mapper.HistoryMapper
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 import java.lang.System.currentTimeMillis
 import javax.inject.Inject
@@ -83,7 +84,11 @@ class DashHistory @Inject constructor(
     fun getRecords(): Single<List<HistoryRecord>> =
         dao.all().map { list -> list.map(historyMapper::entityToDomain) }
 
-    fun getRecordsAfter(time: Long): Single<List<HistoryRecordEntity>> = dao.allSince(time)
+    fun getRecordsAfter(time: Long): Single<List<HistoryRecord>> = dao.allSince(time)
+        .map { list -> list.map(historyMapper::entityToDomain) }
+
+    fun getRecordsAfterObservable(time: Long): Observable<List<HistoryRecord>> = dao.allSinceObservable(time)
+        .map { list -> list.map(historyMapper::entityToDomain) }
 
     fun updateFromState(podState: OmnipodDashPodStateManager) = Completable.defer {
         val historyId = podState.activeCommand?.historyId
